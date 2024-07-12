@@ -1,2 +1,4 @@
-makeENV/eks/.terraform
+makeENV/eks/.terraform/
 makeENV/eks/.terraform.lock
+makeENV/IDE/.env
+makeENV/IDE/password.txt
