@@ -43,7 +43,7 @@ resource "aws_subnet" "private-subnet-a" {
   tags = {
     Name                                        = "private-0"
     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-    "kubernetes.io/role/internal-elb"                      = "1"
+    "kubernetes.io/role/internal-elb"           = "1"
   }
 }
 
