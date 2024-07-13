@@ -12,7 +12,7 @@ RUN mkdir /code && chown 1000:1000 /code
 # Update & Install the packages
 RUN apt-get update && apt-get -y upgrade
 
-RUN apt install -y ca-certificates curl gnupg software-properties-common wget unzip apt-transport-https telnet net-tools vim
+RUN apt install -y ca-certificates curl gnupg software-properties-common wget unzip apt-transport-https telnet net-tools vim iputils-ping
 
 # Docker CLI
 RUN install -m 0755 -d /etc/apt/keyrings  \

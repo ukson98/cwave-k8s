@@ -5,7 +5,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.247.100-192.168.247.110 # set by make target
+  - 172.19.0.100-172.19.0.110 # set by make target
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
