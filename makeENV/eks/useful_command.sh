@@ -8,3 +8,6 @@ aws sts get-caller-identity
 # aws default profile
 aws configure --profile cwave
 export AWS_PROFILE=cwave
+
+# kubectl rename context-name
+kubectl config rename-context old-name new-name

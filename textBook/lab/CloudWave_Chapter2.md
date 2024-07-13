@@ -1,6 +1,6 @@
 ## 12. 서비스 (Service)
 
-### 12.0 Telepresense 
+### 12.0 Telepresense
 
 #### 12.0.1 Telepresense CLI 로컬 설치
 
@@ -36,8 +36,6 @@ sudo chmod a+x /code/local/k8s/util/telepresence
 # 4. Add path to .bashrc
 ```
 
-
-
 #### 12.0.2 Telepresense 서버를 쿠버네티스 클러스터에 설치
 
 ```
@@ -51,8 +49,6 @@ telepresence helm install -n telepresense
 kubectl get all -n telepresence
 ```
 
-
-
 #### 12.0.3 연결 하고 상태 확인하기
 
 ```
@@ -62,8 +58,6 @@ telepresence connect  --manager-namespace telepresence
 # 연결 상태 확인
 telepresence status
 ```
-
-
 
 ### 12.1 ClusterIP
 
@@ -95,8 +89,6 @@ ADD app.js /app.js
 # ENTRYPOINT 명령어로 node 를 실행하고 매개변수로 app.js 를 전달
 ENTRYPOINT ["node", "app.js"]
 ```
-
-
 
 #### 12.1.1. pod 생성
 
@@ -193,10 +185,7 @@ curl 을 설치 하고 Cluster IP 로 접속합니다.
 apt-get install curl
 
 curl http://10.116.11.242
-
 ```
-
-
 
 #### 12.1.5 원격 Pod에서 curl 명령 수행하기
 
@@ -214,11 +203,37 @@ You've hit nodeapp-deployment-55688d9d4b-whbk8
 kubectl delete svc nodeapp-service
 ```
 
+## [연습문제 12-1] ClusterIP
 
+다음 조건을 만족하는 서비스와 ClusterIP 를 생성 하세요
+
+- Deployment
+  
+  | 항목            | 내용          |
+  | ------------- | ----------- |
+  | kind          | Deployment  |
+  | image         | nginx:1.8.9 |
+  | replicas      | 3           |
+  | containerPort | 80          |
+
+- Service
+  
+  | 항목         | 내용        |
+  | ---------- | --------- |
+  | kind       | Service   |
+  | type       | ClusterIP |
+  | port       | 80        |
+  | targetPort | 80        |
+  
+  
+
+- nginx:1.8.9 이미지를 이용하여 Replica=3 인 Deployment 를 생성하세요
+
+- nginx 서비스를 로드밸렁싱 하는 서비스를 ClusterIP 로 생성하세요
+
+- kubernetes port-forward를 이용해서 네트워크를 연결하고 curl 명령어로 웹사이트를 조회 하세요
 
 ### 12.2 NodePort
-
-
 
 #### 12.2.1 yaml 을 이용한 NodePort 생성 (GCP 에서 수행 하기)
 
@@ -257,7 +272,7 @@ service/nodeapp-nodeport   NodePort    10.108.30.68   <none>        80:30123/TCP
 
 #### 12.2.3 NodePort 를 통한 서비스 접속 확인(여러번 수행)
 
-- Vmware VM
+- KIND Cluster
 
 ```{bash}
 $ curl http://localhost:30123
@@ -268,7 +283,6 @@ You've hit nodeapp-deployment-55688d9d4b-whbk8
 
 $ curl http://localhost:30123
 You've hit nodeapp-deployment-55688d9d4b-pslvb
-
 ```
 
 - GCP Cloud
@@ -293,7 +307,7 @@ $ curl http://35.221.70.145:30123
 You've hit nodeapp-deploy-6dc7c5dd68-r78cj
 ```
 
-
+ 
 
 #### 12.2.4 NodePort 삭제
 
@@ -303,9 +317,7 @@ kubectl delete svc nodeapp-nodeport
 
 
 
-### 12.3 LoadBalancer (GCP 에서 수행)
-
-
+### 12.3 LoadBalancer
 
 #### 12.3.1 yaml 파일로 deployment 생성
 
@@ -357,8 +369,6 @@ nodeapp-deployment-7d58f5d487-d74rp   1/1     Running   0          21m   10.32.2
 nodeapp-deployment-7d58f5d487-r8hq8   1/1     Running   0          21m   10.32.2.11   gke-gke1-default-pool-ad44d907-cq8j
 ```
 
-
-
 #### 12.3.2 nodeapp 접속 해보기
 
 ```{bash}
@@ -372,19 +382,43 @@ You've hit nodeapp-deployment-7d58f5d487-7hphx
 
 #### 12.3.3 yaml 파일을 이용해 LoadBalancer 생성
 
-```{yaml}
-apiVersion: v1
-kind: Service
-metadata:
-  name:  nodeapp-lb
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    app: nodeapp-pod
-```
+- KIND Cluster 및 GCP
+  
+  ```{yaml}
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name:  nodeapp-lb
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 8080
+    selector:
+      app: nodeapp-pod
+  ```
+
+- AWS
+  
+  ```{bash}
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name:  nodeapp-lb
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 8080
+    selector:
+      app: nodeapp-pod
+  ```
+  
+  
 
 #### 12.3.5 LoadBalancer 생성 확인
 
@@ -414,11 +448,7 @@ curl http://35.221.179.171
 You've hit nodeapp-deployment-7d58f5d487-r8hq8
 ```
 
-
-
-### 12.4 Ingress (GCP 에서 수행)
-
-
+### 12.4 Ingress
 
 #### 12.4.1 Deployment 생성
 
@@ -470,69 +500,154 @@ spec:
         - containerPort: 8080
 ```
 
-
-
 #### 12.4.2 Service 생성
 
-```{yaml}
-apiVersion: v1
-kind: Service
-metadata:
-  name:  nginx-lb
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    app: nginx
+- KIND Cluster , GCP
+  
+  ```{yaml}
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name:  nginx-lb
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
+    selector:
+      app: nginx
+  
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name:  goapp-lb
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 8080
+    selector:
+      app: goapp
+  ```
+  
+  
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name:  goapp-lb
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    app: goapp
-```
+- AWS
+  
+  ```{yaml}
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name:  nginx-lb
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
+    selector:
+      app: nginx
+  
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name:  goapp-lb
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 8080
+    selector:
+      app: goapp
+  ```
+  
+  
 
 #### 12.4.3 Ingress 생성
 
-```{yaml}
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nginx-goapp-ingress
-spec:
-  rules:
-  - host: nginx.acorn.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-lb
-            port:
-              number: 80
-  - host: goapp.acorn.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: goapp-lb
-            port:
-              number: 80
-```
+- KIND Cluster, GCP
+  
+  ```{yaml}
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: nginx-goapp-ingress
+  spec:
+    rules:
+    - host: nginx.acorn.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: nginx-lb
+              port:
+                number: 80
+    - host: goapp.acorn.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: goapp-lb
+              port:
+                number: 80
+  ```
 
-
+- AWS
+  
+  ```{yaml}
+  apiVersion: networking.k8s.io/v1
+  kind: IngressClass
+  metadata:
+    name: alb-ingress-class
+  spec:
+    controller: ingress.k8s.aws/alb
+  ---
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: nginx-goapp-ingress
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+  spec:
+    ingressClassName: "alb-ingress-class"
+    rules:
+    - host: nginx.duldul32.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: nginx-lb
+              port:
+                number: 80
+    - host: goapp.duldul32.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: goapp-lb
+              port:
+                number: 80
+  ```
+  
+  
 
 #### 12.4.4 Ingress 조회
 
@@ -554,8 +669,6 @@ NAME                  HOSTS                             ADDRESS          PORTS  
 nginx-goapp-ingress   nginx.acorn.com,goapp.acorn.com   35.227.227.127   80, 443   13m
 ```
 
-
-
 #### 12.4.5 /etc/hosts 파일 수정
 
 ```{bash}
@@ -563,8 +676,6 @@ sudo vi /etc/hosts
 
 35.227.227.127 nginx.acorn.com goapp.acorn.com
 ```
-
-
 
 #### 12.4.6 서비스 확인
 
@@ -586,40 +697,15 @@ $ curl http://nginx.acorn.com
 </style>
 </head>
 <body>
-
 ```
 
 
-
-#### 12.4.7 HTTPS 서비스 (TLS OffLoad)
-
-- 인증서 생성 및 인증서 secret 등록
-
-```{bash}
-openssl genrsa -out server.key 2048
-
-openssl req -new -x509 -key server.key -out server.cert -days 360 -subj /CN=nginx.acorn.com
-
-kubectl create  secret tls acorn-secret --cert=server.cert --key=server.key
-```
-
-- 테스트
-
-```{bash}
-$ curl -k https://nginx.acorn.com
-
-$ curl -k https://goapp.acorn.com
-```
 
 
 
 ## 13.Volums
 
-
-
-### 13.1 EmptyDir (GCP 에서 수행)
-
-
+### 13.1 EmptyDir
 
 #### 13.1.1 Docker 이미지 만들기
 
@@ -628,7 +714,6 @@ $ curl -k https://goapp.acorn.com
 ```{bash}
 $ mkdir -p ./fortune/docimg
 $ mkdir -p ./fortune/kubetmp
-
 ```
 
 아래와 같이 docker 이미지를 작성하기 위해 bash 로 Application을 작성 합니다.
@@ -669,8 +754,6 @@ Docker 이미지를 Docker Hub 에 push 합니다.
 $ docker login
 $ docker push dangtong/fortune
 ```
-
-
 
 #### 13.1.2 Deployment 작성
 
@@ -719,18 +802,16 @@ spec:
 ```
 
 > html 볼륨을 html-generator 및 web-seerver 컨테이너에 모두 마운트 하였습니다.
->
+> 
 > html 볼륨에는 /var/htdocs 및 /usr/share/nginx/html 이름 으로 서로 따른 컨테이너에서 바라 보게 됩니다.
->
+> 
 > 다만, web-server 컨테이너는 읽기 전용(reeadOnly) 으로만 접근 하도록 설정 하였습니다.
 
 > emptDir 을 디스크가 아닌 메모리에 생성 할 수도 있으며, 이를 위해서는 아래와 같이 설정을 바꾸어 주면 됩니다.
->
+> 
 > emptyDir:
->
+> 
 > medium: Memory
-
-
 
 #### 13.1.3 LoadBalancer 작성
 
@@ -754,8 +835,6 @@ spec:
   - 192.168.56.108
 ```
 
-
-
 #### 13.1.4 Deployment 및 Loadbalancer 생성
 
 ```{bash}
@@ -763,25 +842,17 @@ $ kubectl apply -f ./fortune-deploy.yaml
 $ kubectl apply -f ./fortune-lb.yaml
 ```
 
-
-
 #### 13.1.5. 서비스 확인
 
 ```{bash}
 curl http://192.168.56.108
 ```
 
-
-
 ### 13.2 Git EmptyDir
-
-
 
 #### 13.2.1 웹서비스용 Git 리포지토리 생성
 
 Appendix3 . Git 계정 생성 및 Sync 참조
-
-
 
 #### 13.2.2 Deployment 용 yaml 파일 작성
 
@@ -823,18 +894,13 @@ spec:
           repository: https://github.com/dangtong76/k8s-web.git
           revision: master
           directory: .
-
 ```
-
-
 
 #### 13.2.3 Deployment 생성
 
 ```{bash}
 $ kubectl apply -f ./gitvolume-deploy.yaml
 ```
-
-
 
 #### 13.2.4 Service 생성
 
@@ -852,11 +918,7 @@ spec:
   type: LoadBalancer
 ```
 
-
-
 ### 13.3 GCE Persisteent DISK 사용하기
-
-
 
 #### 13.3.1. Persistent DISK 생성
 
@@ -881,8 +943,6 @@ $ aws ec2 create-volume --volume-type gp2 --size 80 --availability-zone ap-north
 ## 조회
 ## aws ec2 describe-volumes --filters Name=status,Values=available Name=availability-zone,Values=ap-northeast-2a
 ```
-
-
 
 #### 13.3.2 Pod 생성을 위한 yaml 파일 작성
 
@@ -944,10 +1004,7 @@ Volumes:
     Optional:    false
 
 ...(중략)
-
 ```
-
-
 
 #### 13.3.3 Mongodb 접속 및 데이터 Insert
 
@@ -968,8 +1025,6 @@ kubectl exec -it mongodb mongosh
 
 > exit
 ```
-
-
 
 #### 13.3.4 MongoDB Pod 재시작
 
@@ -1002,11 +1057,7 @@ $ kubectl exec -it mongodb mongo
 $ kubectl delete po mongodb
 ```
 
-
-
 ### 13.4 PersistentVolume 및 PersistentVolumeClaim
-
-
 
 #### 13.4.1 PersistentVolume 생성
 
@@ -1056,27 +1107,19 @@ spec:
                 - ap-northeast-2a
 ```
 
-
-
 - AWS 노드 라벨 부여하기
 
 ```
 kubectl label nodes ip-192-168-11-22.ap-northeast-2.compute.internal az=a
 ```
 
-
-
 ```{bash}
 kubectl apply -f ./gce-pv2.yaml
 ```
 
-
-
 ```{bash}
 kubectl get pv
 ```
-
-
 
 #### 13.4.2 PersistentVolumeClaim 생성
 
@@ -1103,8 +1146,6 @@ kubectl apply -f ./gce-pvc.yaml
 ```{bash}
 kubectl get pvc
 ```
-
-
 
 #### 13.4.3 PV, PVC 를 이용한 Pod 생성
 
@@ -1139,8 +1180,6 @@ $ kubectl apply -f ./gce-pod.yaml
 $ kubectl get po,pv,pvc
 ```
 
-
-
 #### 13.4.4 Mongodb 접속 및 데이터 확인
 
 ```{bash}
@@ -1149,14 +1188,9 @@ $ kubectl exec -it mongodb -- mongo
 > use mystore
 
 > db.foo.find()
-
 ```
 
-
-
 ### 13.5 Persistent Volume 의 동적 할당
-
-
 
 #### 13.5.1 StorageClass 를 이용해 스토리지 유형 정의
 
@@ -1238,7 +1272,7 @@ provisioner: kubernetes.io/gce-pd
 parameters:
   type: pd-ssd
   zone: asia-northeast1-a  #클러스터를 만든 지역으로 설정 해야함
-  
+
 --- 
 # AWS
 apiVersion: storage.k8s.io/v1
@@ -1263,8 +1297,6 @@ allowedTopologies:
 $ kubectl apply -f ./gce-sclass.yaml
 ```
 
-
-
 #### 13.5.2 Storage Class 이용한 PVC 생성
 
 - gce-pvc-sclass.yaml
@@ -1286,8 +1318,6 @@ spec:
 ```{bash}
 $ kubectl apply -f ./gce-pvc-sclass.yaml
 ```
-
-
 
 #### 13.5.3 PV 및 PVC 확인
 
@@ -1327,4 +1357,3 @@ spec:
     persistentVolumeClaim:
       claimName: mongodb-pvc
 ```
-
