@@ -1,5 +1,5 @@
 # get credential of EKS
-aws eks update-kubeconfig --region <region-code> --name <my-cluster>
+aws eks update-kubeconfig --region ap-northeast-2 --name cwave
 
 # test aws cli
 aws s3 ls
