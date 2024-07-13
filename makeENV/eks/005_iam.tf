@@ -1,4 +1,5 @@
 resource "aws_iam_role" "ec2_role" {
+    
   name = "cwave_ec2_role"
 
   assume_role_policy = jsonencode({
@@ -11,7 +12,7 @@ resource "aws_iam_role" "ec2_role" {
         Principal = {
           Service = "ec2.amazonaws.com"
         }
-      },
+      }
     ]
   })
 

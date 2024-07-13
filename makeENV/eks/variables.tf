@@ -26,6 +26,11 @@ variable "terraform_aws_profile" {
   default = "cwave"
 }
 
+variable "terraform_workspace-name" {
+  type = string
+  default = "cwave"
+}
+
 variable "aws_region" {
   type = string
   default = "ap-northeast-2"

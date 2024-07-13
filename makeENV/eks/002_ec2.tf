@@ -17,11 +17,12 @@ resource "local_file" "ssh-key" {
   content         = tls_private_key.cwave-pk.private_key_pem
   file_permission = "0400"
 }
-resource "local_file" "ssh-key-back" {
-  filename        = "cwave.pem"
-  content         = tls_private_key.cwave-pk.private_key_pem
-  file_permission = "0400"
-}
+
+# resource "local_file" "ssh-key-back" {
+#   filename        = "cwave.pem"
+#   content         = tls_private_key.cwave-pk.private_key_pem
+#   file_permission = "0400"
+# }
 
 output "pem_location" {
   value = local_file.ssh-key.filename
