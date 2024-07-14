@@ -849,7 +849,7 @@ kubectl delete pod goapp-pod -n first-namespace
 
 1. 쿠버네티스 클러스터에 몇개의 네임스페이가 존재 하나요?
 2. my-dev 라는 네임스페이를 생성하고 nginx Pod를 배포 하세요
-3. 현재 네임스페이스(Current Namespace)를 변경 하세요
+3. 현재 네임스페이스(Current Namespace)를 Kube-system 으로 변경 하세요
 4. 모든 네임스페이스의 모든 리소스를 한번에 조회 하세요
 
 ## 6. kubectl 기본 사용법
