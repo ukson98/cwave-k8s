@@ -2,7 +2,84 @@
 
 ## 
 
-## 
+## 2-1
+
+아래 정보를 기반으로 POD를 생성 하세요.
+
+| 항목     | 내용          |
+| ------ | ----------- |
+| 이미지    | nginx:1.8.1 |
+| Pod 이름 | nginx-app   |
+| Port   | 80          |
+
+
+
+```{yaml}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-app
+  labels:
+    name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.8.1
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+```
+
+
+
+
+
+port-forward를 이용해서 로컬 8080 포트를 nginx 서비스 포트와 연결하세요
+
+```{bash}
+kubectl port-forward  nginx-app 8080:80
+```
+
+
+
+curl 명령어르 사용해서 nginx 서비스에 접속하세요
+
+```{bash}
+curl http://localhost:8080
+```
+
+
+
+nginx Pod 의 정보를 yaml 파일로 출력 하세요
+
+```{bash}
+kubectl get po nginx-app -o yaml
+```
+
+
+
+nginx Pod의 Bash 에 접속해서 nginx 의 설정파일을 확인하세요
+
+```{bash}
+kubectl exec -it nginx-app -- bash
+```
+
+
+
+nginx-app Pod 를 삭제 하세요
+
+```{bash}
+kubectl delete po nginx-app
+```
+
+
+
+## 4-1
+
+## 5-1
 
 ## 9-1
 
