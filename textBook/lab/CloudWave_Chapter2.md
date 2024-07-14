@@ -224,8 +224,6 @@ kubectl delete svc nodeapp-service
   | type       | ClusterIP |
   | port       | 80        |
   | targetPort | 80        |
-  
-  
 
 - nginx:1.8.9 이미지를 이용하여 Replica=3 인 Deployment 를 생성하세요
 
@@ -307,15 +305,11 @@ $ curl http://35.221.70.145:30123
 You've hit nodeapp-deploy-6dc7c5dd68-r78cj
 ```
 
- 
-
 #### 12.2.4 NodePort 삭제
 
 ```{bash}
 kubectl delete svc nodeapp-nodeport
 ```
-
-
 
 ### 12.3 LoadBalancer
 
@@ -417,8 +411,6 @@ You've hit nodeapp-deployment-7d58f5d487-7hphx
     selector:
       app: nodeapp-pod
   ```
-  
-  
 
 #### 12.3.5 LoadBalancer 생성 확인
 
@@ -530,8 +522,6 @@ spec:
     selector:
       app: goapp
   ```
-  
-  
 
 - AWS
   
@@ -569,8 +559,6 @@ spec:
     selector:
       app: goapp
   ```
-  
-  
 
 #### 12.4.3 Ingress 생성
 
@@ -646,8 +634,6 @@ spec:
               port:
                 number: 80
   ```
-  
-  
 
 #### 12.4.4 Ingress 조회
 
@@ -698,10 +684,6 @@ $ curl http://nginx.acorn.com
 </head>
 <body>
 ```
-
-
-
-
 
 ## 13.Volums
 
@@ -925,22 +907,28 @@ spec:
 - 리전/존 확인
 
 ```{bash}
+# GCP
 $ gcloud container clusters list
+# AWS
+$ aws eks describe-cluster --name cwave
 ```
 
 - Disk 생성
 
 ```{bash}
-# GCP
+## GCP
 $ gcloud compute disks create --size=16GiB --zone asia-northeast1-b  mongodb
-## 삭제
+
+## GCP 삭제
 ## gcloud compute disks delete mongodb --zone asia-northeast1-b
 
-# AWS
+## AWS
 $ aws ec2 create-volume --volume-type gp2 --size 80 --availability-zone ap-northeast-2a
-## 삭제
+
+## AWS 삭제
 ## aws ec2 delete-volume --volume-id vol-038a54dff454064f6
-## 조회
+
+## AWS 조회
 ## aws ec2 describe-volumes --filters Name=status,Values=available Name=availability-zone,Values=ap-northeast-2a
 ```
 
@@ -948,7 +936,7 @@ $ aws ec2 create-volume --volume-type gp2 --size 80 --availability-zone ap-north
 
 AWS 에서는 POD에 직접적으로 디스크를 마운트 하는것을 허용하지 않습니다.
 
-- 파일명 : gce-pv.yaml
+- 파일명 : pv.yaml
 
 ```{yaml}
 # GCP
@@ -1057,55 +1045,43 @@ $ kubectl exec -it mongodb mongo
 $ kubectl delete po mongodb
 ```
 
+### 
+
 ### 13.4 PersistentVolume 및 PersistentVolumeClaim
+
+#### 
 
 #### 13.4.1 PersistentVolume 생성
 
-- gce-pv2.yaml 로 작성
+- GCP
+  
+  ```{yaml}
+  # GCP
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+     name: mongodb-pv
+  spec:
+    capacity:
+      storage: 1Gi
+    accessModes:
+    - ReadWriteOnce
+    - ReadOnlyMany
+    persistentVolumeReclaimPolicy: Retain
+    gcePersistentDisk:
+     pdName: mongodb
+     fsType: ext4
+  ```
 
-```{yaml}
-# GCP
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-   name: mongodb-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-  - ReadWriteOnce
-  - ReadOnlyMany
-  persistentVolumeReclaimPolicy: Retain
-  gcePersistentDisk:
-   pdName: mongodb
-   fsType: ext4
----
-
-# AWS
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-   name: mongodb-pv
-spec:
-  capacity:
-    storage: 1Gi
-  csi:
-    driver: ebs.csi.aws.com
-    fsType: ext4
-    volumeHandle: vol-xxxxxxxxxxxxx
-  accessModes:
-  - ReadWriteOnce
-  - ReadOnlyMany
-  persistentVolumeReclaimPolicy: Retain
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: topology.ebs.csi.aws.com/zone
-              operator: In
-              values:
-                - ap-northeast-2a
-```
+- AWS
+  
+  볼륜정보 조회
+  
+  ```{yaml}
+  aws ec2 describe-volumes --filters "Name=availability-zone,Values=ap-northeast-2a"
+  ```
+  
+  - 
 
 - AWS 노드 라벨 부여하기
 

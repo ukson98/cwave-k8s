@@ -11,3 +11,4 @@ export AWS_PROFILE=cwave
 
 # kubectl rename context-name
 kubectl config rename-context old-name new-name
+

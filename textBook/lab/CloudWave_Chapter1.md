@@ -3,16 +3,14 @@
 ### 1.1 도커 허브 이미지로 컨테이너 생성 및 확인
 
 - 컨테이너 생성 : run/v1 으로 수행 합니다.
-
+  
   ```{bash}
   # POD 만 생성
   $ kubectl create deployment nginx --image=nginx
   ```
 
-  
-
 - 컨테이너 확인
-
+  
   ```{bash}
   $ kubectl get pods
   ```
@@ -27,28 +25,28 @@
   ```
   
   > 아래 명령어를 추가적으로 수행해 보세요
-  >
+  > 
   > ```
   > kubectl get pods -o wide
   > kubectl describe pod <pod_name>
   > ```
-  
-- k8s 서비스 생성
 
+- k8s 서비스 생성
+  
   ```{bash}
   $ kubectl expose deployment nginx --name=nginx-svc --type=LoadBalancer --port 80
   ```
-
+  
   ```{text}
   service/nginx-svc exposed
   ```
 
 - 생성한 서비스 조회
-
+  
   ```{bash}
   $ kubectl get svc
   ```
-
+  
   ```{text}
   NAME         TYPE           CLUSTER-IP       EXTERNAL-IP       PORT(S)        AGE
   kubernetes   ClusterIP      10.120.0.1       <none>            443/TCP        5h2m
@@ -56,13 +54,13 @@
   ```
 
 - 서비스 테스트 (여러번 수행)
-
+  
   ```{bash}
   curl http://192.168.247.100
   ```
-
+  
   [출력]
-
+  
   ```{text}
   <!DOCTYPE html>
   <html>
@@ -88,8 +86,6 @@
   </body>
   </html>
   ```
-
-  
 
 - POD 삭제
 
@@ -233,8 +229,6 @@ $ kubectl delete deploy nginx
 $ kubectl delete svc nginx-svc
 ```
 
-
-
 ### 2.2 POD 생성을 위한 YAML 파일 만들기
 
 아래와 같이 goapp.yaml 파일을 만듭니다.
@@ -254,7 +248,7 @@ spec:
 ```
 
 > ports 정보를 yaml 파일에 기록 하지 않으면 아래 명령어로 향후에 포트를 할당해도 됩니다.
->
+> 
 > ```
 > $ kubectl port-forward goapp-pod 8080:8080
 > 
@@ -270,8 +264,6 @@ spec:
 > bash-5.0# hostname
 > goapp-pod
 > ```
-
-
 
 ### 5.3 YAML 파일을 이용한 POD 생성 및 확인
 
@@ -295,8 +287,6 @@ $ kubectl get pod
 NAME                  READY   STATUS    RESTARTS   AGE
 goapp-pod             1/1     Running   0          12m
 ```
-
-
 
 ### 5.4 POD 및 Container 로그 확인
 
@@ -326,33 +316,27 @@ Starting GoApp Server......
 
 > 현재 1개 POD 내에 Container 가 1이기 때문에 출력 결과는 동일 합니다. POD 내의 Container 가 여러개 일 경우 모든 컨테이너의 표준 출력이 화면에 출력됩니다.
 
-
-
 - Pod 삭제
 
 ```{bash}
 kubectl delete po goapp-pod
 ```
 
-
-
 ### [연습문제 2-1]
 
 아래 정보를 기반으로 POD를  생성 하세요.
 
-| 항목     | 내용         |
-| -------- | ------------ |
-| 이미지   | nginx:1.18.0 |
+| 항목     | 내용           |
+| ------ | ------------ |
+| 이미지    | nginx:1.18.0 |
 | Pod 이름 | nginx-app    |
-| Port     | 80           |
+| Port   | 80           |
 
 1. port-forward를 이용해서 로컬 8080 포트를 nginx 서비스 포트와 연결하세요
 2. curl 명령어르 사용해서 nginx 서비스에 접속하세요
 3. nginx Pod 의 정보를 yaml 파일로 출력 하세요
 4. Nginx Pod의 Bash 에 접속해서 nginx 의 설정파일을 확인하세요
 5. nginx-app Pod 를 삭제 하세요
-
-
 
 ## 3. Lable
 
@@ -588,7 +572,7 @@ worker02.sas.com   Ready    <none>   17d   v1.17.0
 ```
 
 - 특정 노드에 신규 POD 스케줄링
-
+  
   아래 내용과 같이 goapp-label-node.yaml 파을을 작성 합니다.
 
 ```{yaml}
@@ -631,8 +615,6 @@ goapp-pod-memhigh     1/1     Running   0          17s    10.32.0.5   worker02.s
 
 ## 4. Annotation
 
-
-
 ### 4.1 POD 에 Annotation 추가하기
 
 ```{bash}
@@ -644,8 +626,6 @@ kubectl annotate pod goapp-pod-memhigh maker="dangtong" team="k8s-team"
 ```{txt}
 pod/goapp-pod-memhigh annotated
 ```
-
-
 
 ### 4.2 Annotation 확인하기
 
@@ -694,15 +674,11 @@ Status:       Running
 IP:           10.32.0.5
 ```
 
-
-
 ### 4.3 Annotation 삭제
 
 ```{bash}
 kubectl annotate pod  goapp-pod-memhigh maker- team-
 ```
-
-
 
 ### [연습문제 4-1]
 
@@ -726,11 +702,7 @@ spec:
     name: goapp-container-memhigh
 ```
 
-
-
 ## 5. Namespace
-
-
 
 ### 5.1 네임스페이스 조회
 
@@ -749,8 +721,6 @@ kube-node-lease   Active   17d
 kube-public       Active   17d
 kube-system       Active   17d
 ```
-
-
 
 ### 5.2 특정 네임스페이스의 POD 조회
 
@@ -777,8 +747,6 @@ weave-net-2pm2x                          2/2     Running   0          17d
 weave-net-4wksv                          2/2     Running   0          17d
 weave-net-7j7mn                          2/2     Running   0          17d
 ```
-
-
 
 ### 5.3 YAML 파일을 이용한 네임스페이스 생성
 
@@ -823,8 +791,6 @@ kube-system       Active   17d
 
 > kubectl create namespace first-namespace 와 동일 합니다.
 
-
-
 ### 5.4 특정 네임스페이스에 POD 생성
 
 - first-namespace 에 goapp 생성
@@ -852,8 +818,6 @@ NAME        READY   STATUS    RESTARTS   AGE
 goapp-pod   1/1     Running   0          12h
 ```
 
-
-
 ### 5.5 POD 삭제
 
 ```{bash}
@@ -869,19 +833,17 @@ kubectl delete pod goapp-pod -n first-namespace
 ```
 
 > 현재 네임스페이스 에서 존재 하는 모든 리소스를 삭제하는 명령은 아래와 같습니다.
->
+> 
 > kubectl delete all --all
->
+> 
 > 현재 네임스페이스를 설정하고 조회 하는 명령은 아래와 같습니다.
->
+> 
 > ```shell
 > # 네임스페이스 설정
 > kubectl config set-context --current --namespace=<insert-namespace-name-here>
 > # 확인
 > kubectl config view --minify | grep namespace:
 > ```
-
-
 
 ### [연습문제 5-1]
 
@@ -890,21 +852,19 @@ kubectl delete pod goapp-pod -n first-namespace
 3. 현재 네임스페이스(Current Namespace)를 변경 하세요
 4. 모든 네임스페이스의 모든 리소스를 한번에 조회 하세요
 
-
-
 ## 6. kubectl 기본 사용법
 
 ### 6.1 단축형 키워드 사용하기
 
 ```{bash}
-kubectl get po			# PODs
-kubectl get svc			# Service
-kubectl get rc			# Replication Controller
-kubectl get deploy	# Deployment
-kubectl get ns			# Namespace
-kubectl get no			# Node
-kubectl get cm			# Configmap
-kubectl get pv			# PersistentVolumns
+kubectl get po            # PODs
+kubectl get svc            # Service
+kubectl get rc            # Replication Controller
+kubectl get deploy    # Deployment
+kubectl get ns            # Namespace
+kubectl get no            # Node
+kubectl get cm            # Configmap
+kubectl get pv            # PersistentVolumns
 ```
 
 ### 6.2 도움말 보기
@@ -957,7 +917,6 @@ Examples:
 
   # List all pods in ps output format with more information (such as node name).
   kubectl get pods -o wide
-
 ```
 
 ### 6.3 리소스 정의에 대한 도움말
@@ -975,27 +934,27 @@ DESCRIPTION:
      created by clients and scheduled onto hosts.
 
 FIELDS:
-   apiVersion	<string>
+   apiVersion    <string>
      APIVersion defines the versioned schema of this representation of an
      object. Servers should convert recognized schemas to the latest internal
      value, and may reject unrecognized values. More info:
      https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-   kind	<string>
+   kind    <string>
      Kind is a string value representing the REST resource this object
      represents. Servers may infer this from the endpoint the client submits
      requests to. Cannot be updated. In CamelCase. More info:
      https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-   metadata	<Object>
+   metadata    <Object>
      Standard object's metadata. More info:
      https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-   spec	<Object>
+   spec    <Object>
      Specification of the desired behavior of the pod. More info:
      https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-   status	<Object>
+   status    <Object>
      Most recently observed status of the pod. This data may not be up to date.
      Populated by the system. Read-only. More info:
      https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
@@ -1026,8 +985,6 @@ weave-net-4wksv                          2/2     Running   0          19d
 weave-net-7j7mn                          2/2     Running   0          19d
 ...
 ```
-
-
 
 ### 6.5 kubectx 및 kubens 사용하기
 
@@ -1115,7 +1072,7 @@ PS1='[\u@\h \W $(kube_ps1)]\$ '
 [root@master ~ (⎈ |kubernetes-admin@kubernetes:kube-public)]#
 ```
 
-### 6.7 kubectl Context 
+### 6.7 kubectl Context
 
 . kube 디렉토리의 config 에 virtualBox 에 
 
@@ -1149,8 +1106,6 @@ kubectl config unset clusters.[context-name]
 
 > google cloud 에서는 cluster-name, context-name, user-name.  이 모두 동일함
 
-
-
 ### 6.8 alias 만들기
 
 - Linux 및 MAC
@@ -1166,10 +1121,6 @@ alias lsks='kubectl config get-contexts'
 Set-Alias chks 'kubectl config use-context'
 Set-Alias lsks 'kubectl config get-contexts'
 ```
-
-
-
-
 
 ## 7. Liveness probes
 
@@ -1204,10 +1155,6 @@ spec:
 ```
 
 K8s.gcr.io/liveness 이미지는 liveness 테스트를 위해 만들어진 이미지 입니다. Go 언어로 작성 되었으며, 처음 10초 동안은 정상적인 서비스를 하지만, 10초 후에는 에러를 발생 시킵니다. 자세한 사항은 [URL](https://github.com/kubernetes/kubernetes/blob/master/test/images/agnhost/liveness/server.go) 을 참고 하세요
-
-
-
-
 
 ### 7.1 Pod 생성
 
@@ -1372,10 +1319,7 @@ kubectl get rc -o wide
 
 NAME       DESIRED   CURRENT   READY   AGE   CONTAINERS        IMAGES           SELECTOR
 goapp-rc   3         3         3       72s   goapp-container   dangtong/goapp   app=goapp
-
 ```
-
-
 
 ### 8.5 특정 Pod 삭제하고 변화 확인하기
 
@@ -1386,10 +1330,10 @@ goapp-rc   3         3         3       72s   goapp-container   dangtong/goapp   
 ```{bash}
 kubectl get pod -w
 
-NAME             READY   STATUS    						RESTARTS   AGE
-goapp-rc-d5rnf   1/1     Running   						0          2m
-goapp-rc-fm7kr   1/1     Running   						0          2m
-goapp-rc-szv2r   1/1     ContainerCreating   	0          6s
+NAME             READY   STATUS                            RESTARTS   AGE
+goapp-rc-d5rnf   1/1     Running                           0          2m
+goapp-rc-fm7kr   1/1     Running                           0          2m
+goapp-rc-szv2r   1/1     ContainerCreating       0          6s
 ```
 
 - 두번째 터미널에서 Pod 삭제
@@ -1398,11 +1342,7 @@ goapp-rc-szv2r   1/1     ContainerCreating   	0          6s
 kubectl delete pod goapp-rc-9q689
 ```
 
-
-
 기존 컨테이너를 Terminating 하고 새로운 컨테이너를 생성하는 것을 볼 수 있습니다.
-
-
 
 ### 8.6 Pod 정보를 라벨과 함께 출력해보기
 
@@ -1414,8 +1354,6 @@ goapp-rc-d5rnf   1/1     Running   0          7m26s   app=goapp
 goapp-rc-fm7kr   1/1     Running   0          7m26s   app=goapp
 goapp-rc-szv2r   1/1     Running   0          4m51s   app=goapp
 ```
-
-
 
 ### 8.7 특정 Pod 라벨을 변경해보기
 
@@ -1433,13 +1371,11 @@ goapp-rc-szv2r   1/1     Running             0          6m14s
 
 - Pod의 라벨 변경하기
 
-​	기존 "app=nginx" 라는 label 을 "app=goapp-exit" 로 변경 합니다.
+​    기존 "app=nginx" 라는 label 을 "app=goapp-exit" 로 변경 합니다.
 
 ```{bash}
 kubectl label pod goapp-rc-szv2r app=goapp-exit --overwrite
 ```
-
-
 
 - 첫번째 터미널에서 Pod 변화 확인하기
 
@@ -1453,8 +1389,6 @@ goapp-rc-l9cnd   0/1     Pending   0          0s
 goapp-rc-l9cnd   0/1     ContainerCreating   0          0s
 goapp-rc-l9cnd   1/1     Running             0          3s
 ```
-
-
 
 ### 8.8 Pod Template 변경 해보기
 
@@ -1518,10 +1452,8 @@ status:
 저장후 편집기를 종료 합니다.
 
 > 리눅스 편집기에는 다양한 종류가 있습니다. 만약 기본 편집기를 변경하고 싶으면
->
+> 
 > KUBE_EDITOR="/bin/nano" 를 $HOME/.bashrc 파일에 선언 해주면 원하는 편집기를 사용 할수 있습니다.
-
-
 
 ### 8.9 Pod Template를 적용하기 위해 임의의 Pod 삭제하기
 
@@ -1571,18 +1503,12 @@ kubectl logs goapp-rc-zc9s4
 Starting GoApp Server V2......
 ```
 
-
-
 여기서 알수 있는 중요한 사실은 이미지를 변경 하더라도 **바로 적용 되는 것이 아니라**, **Pod 를 반드시 재시작** 해야 한다는 것입니다.
-
-
-
-
 
 ### 8.10 Pod 스케일링
 
 - Template 변경을 통한 스케일링
-
+  
   아래와 같이 goapp-rc 를 edit 명령으로 수정 합니다. (replicas 항목을 3에서 4로 수정)
 
 ```{bash}
@@ -1664,8 +1590,6 @@ goapp-rc-qkrpw   1/1     Running             0          79m
 goapp-rc-x6q4d   1/1     Running             0          4h19m
 ```
 
-
-
 ### 8.11 Replication Controller 삭제
 
 Replication Controller 와 POD 모두 삭제
@@ -1679,8 +1603,6 @@ Replication Controller 만 삭제. POD 는 그대로 유지 합니다.
 ```{bash}
 kubectl delete rc goapp-rc --cascade=orphan
 ```
-
-
 
 ## 9.ReplicaSet
 
@@ -1716,8 +1638,6 @@ spec:
         image: gcr.io/google_samples/gb-frontend:v3
 ```
 
-
-
 ### 9.2 RS 확인
 
 ```{bash}
@@ -1736,7 +1656,6 @@ AME             READY   STATUS    RESTARTS   AGE   IP          NODE
 frontend-bstms   1/1     Running   0          68s   10.32.2.7   gke-gke1-default-pool-ad44d907-cq8j
 frontend-d4znb   1/1     Running   0          68s   10.32.2.9   gke-gke1-default-pool-ad44d907-cq8j
 frontend-rv9bl   1/1     Running   0          68s   10.32.2.8   gke-gke1-default-pool-ad44d907-cq8j
-
 ```
 
 ```{bash}
@@ -1748,20 +1667,14 @@ frontend-d4znb   1/1     Running   0          107s   env=prod,priority=high,tier
 frontend-rv9bl   1/1     Running   0          107s   env=prod,priority=high,tier=frontend
 ```
 
-
-
 ### [연습문제 9-1]
 
-1. nginx:1.18 Pod 3개로 구성된 Replication Controller를 작성 하세요
+1. nginx:1.9.1 Pod 3개로 구성된 Replication Controller를 작성 하세요
 2. Replication Controller 만 삭제 하세요 (Pod 는 유지)
 3. 남겨진 nginx Pod를 관리하는 ReplicaSet 을 작성하된 replica 4개로 구성 하세요
 4. nginx Pod 를 6개로 Scale Out 하세요
 
-
-
 ## 10.DeamonSet
-
-
 
 ### 10.1 데몬셋 생성
 
@@ -1828,20 +1741,12 @@ AME           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR
 goapp-on-ssd   2         2         2       2            2           disk=ssd        10m
 ```
 
-
-
 ### [연습문제 10-1]
 
 1. 데몬셋은 어떤 용도로 사용되는지 생각해봅니다.
 2. 현재 쿠버네티스에서 DaemonSet 으로 실행중인 Pod를 찾아 봅니다
 
-
-
-
-
 ## 11.Deployment
-
-
 
 ### 11.1 Deployment 생성
 
@@ -1859,6 +1764,11 @@ spec:
   selector:
     matchLabels:
       app: nginx
+  strategy:
+    type: RollingUpdate # Recreate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -1866,10 +1776,9 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.7.9
+        image: nginx:1.7.1
         ports:
         - containerPort: 80
-
 ```
 
 ```{bash}
@@ -1894,64 +1803,218 @@ deployment.apps/nginx-deployment   3/3     3            3           30s
 
 ### 11.3 이미지 업데이트
 
-- 기본 방식
+- yaml 파일 변경
 
 ```{yaml}
-kubectl --record deployment.apps/nginx-deployment set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: RollingUpdate # Recreate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.9.1 # 버전 변경
+        ports:
+        - containerPort: 80
 ```
 
-- 단축 방식
+- 새창 열어 모니터링
 
 ```{bash}
-kubectl set image deployment.apps/nginx-dp nginx=nginx:1.9.1 --record
+kubectl get po -w
 ```
 
-- yaml 파일 수정(.spec.template.spec.containers[0].image 변경)
+- 적용
 
 ```{bash}
-kubectl edit deploy nginx-deployment
+kubectl apply -f ./nginx-deply.yaml
+```
+
+- yaml 파일 수정
+
+```{bash}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: RollingUpdate # Recreate
+    rollingUpdate:
+      maxUnavailable: 2 # 변경 부분 
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.9.1
+        ports:
+        - containerPort: 80
+```
+
+- 이미지를 명령어로 변경
+
+```{yaml}
+kubectl set image deployment.apps/nginx-deployment nginx=nginx:latest
+```
+
+> --record 옵션은 향후 deprecated 될 예정임
+
+- Annotation으로  히스토리 기록하기
+
+```{bash}
+kubectl annotate deployment nginx-deployment kubernetes.io/change-cause="change maxUnavailable to 2 and updated image to nginx:latest" 
 ```
 
 - rollout History 조회
 
 ```shell
-kubectl rollout history deploy nginx-deployment
+$ kubectl rollout history deploy nginx-deployment
+```
 
+```{text}
+[output]
 REVISION  CHANGE-CAUSE
 1         <none>
-2         kubectl deployment.apps/nginx-deployment set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1 --record=true
+3         updated image to nginx:1.9.1
+4         change maxUnavailable to 2 and updated image to nginx:latest
 ```
 
 - rollback 수행
 
 ```{bash}
-kubectl rollout undo deploy nginx-deployment --to-revision=1
+$ kubectl rollout undo deploy nginx-deployment --to-revision=1
 ```
-
-
 
 ### 11.4 Deployment ScaleOut
 
-```{bash}
-kubectl edit deploy goapp-deployment
-
-kubectl scale deploy nginx-deployment
-goapp-deployment-5857594fbb-2hhnv   1/1     Running   0          32m
-goapp-deployment-5857594fbb-6s9lx   1/1     Running   0          6s
-goapp-deployment-5857594fbb-7nqsg   1/1     Running   0          32m
-goapp-deployment-5857594fbb-9b28s   1/1     Running   0          32m
-```
-
-### 11.4 deployment 확인 하기
-
-- 롤아웃 확인
+- Pod 5개 까지 확장하기
 
 ```{bash}
-kubectl rollout status deployment.v1.apps/nginx-deployment
+kubectl scale deployment nginx-deployment --replicas=5
+deployment.apps/nginx-deployment scaled
 ```
 
-- deployment 상세 확인
+```{txt}
+[output]
+deployment.apps/nginx-deployment scaled
+```
+
+- 확장된 Pod 확인하기
+
+```{bash}
+kubectl get po
+```
+
+```{txt}
+[output]
+NAME                               READY   STATUS    RESTARTS   AGE
+nginx-deployment-9d6cbcc65-j4qx6   1/1     Running   0          22s
+nginx-deployment-9d6cbcc65-l4dsd   1/1     Running   0          22s
+nginx-deployment-9d6cbcc65-mlq7s   1/1     Running   0          2m35s
+nginx-deployment-9d6cbcc65-nhmjj   1/1     Running   0          2m35s
+nginx-deployment-9d6cbcc65-rbvgn   1/1     Running   0          2m35s
+```
+
+
+
+### 11.4 deployment 상태 확인 하기
 
 ```{bash}
 kubectl describe deploy nginx-deployment
 ```
+
+```{txt}
+[output]
+Name:                   nginx-deployment
+Namespace:              default
+CreationTimestamp:      Sun, 14 Jul 2024 17:14:09 +0900
+Labels:                 app=nginx
+Annotations:            deployment.kubernetes.io/revision: 5
+Selector:               app=nginx
+Replicas:               5 desired | 5 updated | 5 total | 5 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  2 max unavailable, 1 max surge
+Pod Template:
+  Labels:  app=nginx
+  Containers:
+   nginx:
+    Image:        nginx:1.7.9
+    Port:         80/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  nginx-deployment-54b6f7ddf9 (0/0 replicas created), nginx-deployment-7ffd5c8dc9 (0/0 replicas created)
+NewReplicaSet:   nginx-deployment-9d6cbcc65 (5/5 replicas created)
+Events:
+  Type    Reason             Age                From                   Message
+  ----    ------             ----               ----                   -------
+  Normal  ScalingReplicaSet  53m                deployment-controller  Scaled up replica set nginx-deployment-9d6cbcc65 to 3
+  Normal  ScalingReplicaSet  52m                deployment-controller  Scaled up replica set nginx-deployment-54b6f7ddf9 to 1
+  Normal  ScalingReplicaSet  52m                deployment-controller  Scaled down replica set nginx-deployment-9d6cbcc65 to 2 from 3
+  Normal  ScalingReplicaSet  52m                deployment-controller  Scaled up replica set nginx-deployment-54b6f7ddf9 to 2 from 1
+  Normal  ScalingReplicaSet  52m                deployment-controller  Scaled down replica set nginx-deployment-9d6cbcc65 to 1 from 2
+  Normal  ScalingReplicaSet  52m                deployment-controller  Scaled up replica set nginx-deployment-54b6f7ddf9 to 3 from 2
+  Normal  ScalingReplicaSet  52m                deployment-controller  Scaled down replica set nginx-deployment-9d6cbcc65 to 0 from 1
+  Normal  ScalingReplicaSet  42m                deployment-controller  Scaled up replica set nginx-deployment-7ffd5c8dc9 to 1
+  Normal  ScalingReplicaSet  42m                deployment-controller  Scaled down replica set nginx-deployment-54b6f7ddf9 to 2 from 3
+  Normal  ScalingReplicaSet  42m                deployment-controller  Scaled up replica set nginx-deployment-7ffd5c8dc9 to 2 from 1
+```
+
+
+
+### [연습문제 11 -1]
+
+1. 아래 조건에 맞는 Deployment 를 생성 하세요
+- Deployment 사양
+
+| 항목       | 내용               |
+| -------- | ---------------- |
+| kind     | Deployment       |
+| image    | httpd:2.3-alpine |
+| replicas | 5                |
+
+- 서비스 조건
+
+| 항목             | 내용  |
+| -------------- | --- |
+| 최소 서비스 인스턴스 개수 | 2개  |
+| 최대 인스턴스수 제한    | 7개  |
+
+2. Deployemnt 의 image 를 httpd:2.4-appine 으로 변경하세요
+
+3. 변경 사유를 Rollout History 에 남기세요
+
+4. 전체 인스턴스 개수를 7개 까지 확장하세요
